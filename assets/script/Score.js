@@ -3,18 +3,18 @@
 export default 'Score';
 
 export class Score {
-    #data;
+    #date;
     #hits;
     #percentage;
 
-    constructor(data, hits, percentage) {
-        this.#data = data;
+    constructor(date, hits, percentage) {
+        this.#date = date;
         this.#hits = hits;
         this.#percentage = percentage;
     }
 
-    get data() {
-        return this.#data;
+    get date() {
+        return this.#date;
     }
 
     get hits() {

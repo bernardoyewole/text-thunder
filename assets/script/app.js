@@ -27,6 +27,13 @@ const words = [
 
 const sound = new Audio('./assets/audio/game-sound.wav');
 sound.type = 'audio/wav';
+sound.volume = 0.04;
+
+const soundTwo = new Audio('./assets/audio/right.mp3');
+soundTwo.type = 'audio/mp3';
+soundTwo.volume = 0.07;
+
+
 const scores = [];
 
 const start = select('.start');
@@ -34,14 +41,13 @@ const time = select('.time');
 const hits = select('.hits span');
 const myWord = select('.my-word');
 const input = select('.input');
-
 const result = select('.result');
 const background = select('.background');
 const resultContent = select('.result h1');
 const restart = select('.restart');
 const SECOND_IN_MILLISECONDS = 1000;
 
-let seconds = 10;
+let seconds = 90;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
@@ -71,7 +77,7 @@ function playSound() {
     sound.play();
 }
 
-let soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
+let soundInterval;
 
 function randomIndex(length) { 
     return Math.floor(Math.random() * length);
@@ -88,6 +94,7 @@ let gameIsOn = false;
 
 onEvent('click', start, () => {
     if (!gameIsOn) {
+        soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
         input.focus();
         playSound();
         timeInterval();
@@ -99,8 +106,9 @@ onEvent('click', start, () => {
 function wordHit() {
     gameOver();
     let userWord = input.value;
-        if (userWord === myWord.innerText) {
+        if (userWord.toLowerCase().trim() === myWord.innerText) {
         if (userWord !== '' && myWord.innerText !== '') {
+            soundTwo.play();
             hitNum++;
             hits.innerText = hitNum;
             input.value = '';
@@ -109,13 +117,13 @@ function wordHit() {
     }
 }
 
-let checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
+let checkInput = setInterval(wordHit, 1);
 
 function resetIntervals() {
     if (!gameIsOn) {
-        seconds = 10;
+        seconds = 5;
         time.innerText = `${seconds}`;
-        checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
+        checkInput = setInterval(wordHit, 1);
         soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
         timeInterval();
     }
@@ -143,22 +151,23 @@ function resetGame() {
 }
 
 function createScore() {
-    let percentage = ((hitNum / words.length)) / 100;
-    let newScore = new Score('Anonymous 011', `${hitNum}`, `${percentage}%`);
+    let percentage = Math.round(((hitNum / words.length)) * 100) ;
+    let newScore = new Score(`${new Date().toDateString()}`, `${hitNum}`, `${percentage}%`);
     scores.push(newScore);
 }
 
 function getScoreObj() {
     let scoreObj = scores[scores.length - 1];
-    const {data, hits, percentage} = scoreObj;
+    const {date, hits, percentage} = scoreObj;
     return {
-        Username: data, 
+        Date: date,
+        Username: 'Anonymous 001', 
         Hits: hits,
         Percentage: percentage,
     }
 }
 
-let resultParagraphs
+let resultParagraphs;
 
 function displayData() {
     let obj = getScoreObj();
@@ -167,7 +176,7 @@ function displayData() {
 
     for (const prop in obj) {
         parag = create('p');
-        parag.innerText = `${prop}: ${obj[prop]}`
+        parag.innerText = `${prop}: ${obj[prop]}`;
         result.appendChild(parag);
     }
     resultParagraphs.forEach(parag => parag.remove());
@@ -178,7 +187,7 @@ function gameOverFns() {
     displayData();
     input.value = '';
     clearInterval(checkInput);
-    clearInterval(soundInterval)
+    clearInterval(soundInterval);
     removeGameOver();
     sound.pause();
 }
@@ -194,4 +203,3 @@ function gameOver() {
         });
     }
 }
-
