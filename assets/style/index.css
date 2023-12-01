@@ -31,7 +31,7 @@ header {
 
 h1 {
     color: #83a003;
-    font-size: 40px;
+    font-size: 60px;
     font-weight: 600;
 }
 
@@ -45,7 +45,7 @@ header div {
     border-radius: 50%;
 }
 
-.restart {
+.start {
     padding: 14px 30px;
     border-radius: 4px;
     background-color: #83a003;
@@ -54,7 +54,7 @@ header div {
     cursor: pointer;
 }
 
-.restart:hover {
+.start:hover {
     background-color: #677d02;
 }
 
@@ -72,18 +72,19 @@ header div {
     gap: 20px;
 }
 
-.game p {
-    color: #fff;
-}
-
 .hits {
-    color: #fff;
-    font-size: 20px;
+    color: #83a003;
+    font-size: 24px;
+    font-weight: 500;
 }
 
 .info {
     text-align: center;
     height: 68px;
+}
+
+.info p {
+    color: #fff;
 }
 
 .word-container {
@@ -113,4 +114,34 @@ header div {
     color: #fff;
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid #fff;
+}
+
+.result {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.result p {
+    font-size: 20px;
+    color: #f6f6ff;
+    text-align: center;
+    padding-top: 20px;
+    font-weight: 600;
+}
+
+.result h1 {
+    font-size: 60px;
+    color: #f6f6ff;
+    font-weight: 700;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
 }
