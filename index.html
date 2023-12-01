@@ -6,7 +6,7 @@
         <meta name="author" content="Bernard">
         <meta name ="description" content="Bernard: Student">
         <meta name="keywords" content="web developer, web, developer, front-end, html, css, javascript, react, sql">
-        <title>Contact App</title>
+        <title>Text Thunder</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"> 
@@ -15,8 +15,24 @@
         <script src="./assets/script/app.js" type="module"></script>
     </head>
     <body>
+        <header class="container">
+            <button type="button" class="restart">Start</button>
+            <h1>Text Thunder</h1>
+            <div><span class="time"></span></div>
+        </header>
         <main>
-            
+            <div class="container game">
+                <div class="info">
+                    <p>Press the "Start" button to begin the game.</p>
+                    <p>Type as many words as you can in 90 seconds.</p>
+                    <p>Let's see who's the boss!</p>
+                </div>
+                <p class="hits">Hits: 14</p>
+                <div class="word-container">
+                    <p class="my-word"></p>
+                </div>
+                <input type="text" class="input">
+            </div>
         </main>
     </body>
 </html>
