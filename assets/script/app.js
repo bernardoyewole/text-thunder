@@ -27,20 +27,31 @@ const words = [
 
 const sound = new Audio('./assets/audio/game-sound.wav');
 sound.type = 'audio/wav';
+const scores = [];
 
 const start = select('.start');
 const time = select('.time');
-const info = select('.info');
 const hits = select('.hits span');
 const myWord = select('.my-word');
 const input = select('.input');
 
+const result = select('.result');
+const background = select('.background');
+const resultContent = select('.result h1');
+const restart = select('.restart');
 const SECOND_IN_MILLISECONDS = 1000;
-let seconds = 90;
-let randomIndex = Math.floor(Math.random() * 120);
+
+let seconds = 10;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
+
+onEvent('load', window, () => {
+    input.value = '';
+    restart.classList.add('hidden');
+    result.classList.add('hidden');
+    input.focus();
+});
 
 function updateTime() {
     seconds--;
@@ -60,11 +71,15 @@ function playSound() {
     sound.play();
 }
 
-// setInterval(playSound, SECOND_IN_MILLISECONDS);
+let soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
 
+function randomIndex(length) { 
+    return Math.floor(Math.random() * length);
+}
+
+let copy = [...words];
 function addNewWord() {
-    let copy = words;
-    let index = randomIndex;
+    let index = randomIndex(copy.length);
     myWord.innerText = `${copy[index]}`;
     copy.splice(index, 1);
 }
@@ -73,6 +88,7 @@ let gameIsOn = false;
 
 onEvent('click', start, () => {
     if (!gameIsOn) {
+        input.focus();
         playSound();
         timeInterval();
         addNewWord();
@@ -95,53 +111,87 @@ function wordHit() {
 
 let checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
 
-
 function resetIntervals() {
     if (!gameIsOn) {
-        seconds = 90;
+        seconds = 10;
         time.innerText = `${seconds}`;
         checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
+        soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
         timeInterval();
     }
+}
+
+function removeGameOver() {
+    resultContent.innerText = 'Game Over';
+    start.classList.add('hidden');
+    result.classList.remove('hidden');
+    restart.classList.remove('hidden');
+    background.classList.add('bg-blur');
+}
+
+function resetGame() {
+    copy = [...words];
+    result.classList.add('hidden');
+    resultContent.innerText = '';
+    input.value = '';
+    background.classList.remove('bg-blur');
+    hitNum = 0;
+    hits.innerText = hitNum;
+    resetIntervals();
+    addNewWord();
+    gameIsOn = true;
+}
+
+function createScore() {
+    let percentage = ((hitNum / words.length)) / 100;
+    let newScore = new Score('Anonymous 011', `${hitNum}`, `${percentage}%`);
+    scores.push(newScore);
+}
+
+function getScoreObj() {
+    let scoreObj = scores[scores.length - 1];
+    const {data, hits, percentage} = scoreObj;
+    return {
+        Username: data, 
+        Hits: hits,
+        Percentage: percentage,
+    }
+}
+
+let resultParagraphs
+
+function displayData() {
+    let obj = getScoreObj();
+    let parag;
+    resultParagraphs = selectAll('.result p');
+
+    for (const prop in obj) {
+        parag = create('p');
+        parag.innerText = `${prop}: ${obj[prop]}`
+        result.appendChild(parag);
+    }
+    resultParagraphs.forEach(parag => parag.remove());
+}
+
+function gameOverFns() {
+    createScore();
+    displayData();
+    input.value = '';
+    clearInterval(checkInput);
+    clearInterval(soundInterval)
+    removeGameOver();
+    sound.pause();
 }
 
 function gameOver() {
     gameIsOn = false;
     if (time.innerText === '0') {
-        clearInterval(checkInput);
-
-
-        resultContent.innerText = 'Game Over';
-        start.classList.add('hidden');
-        result.classList.remove('hidden');
-        restart.classList.remove('hidden');
-        background.classList.add('bg-blur');
+        gameOverFns();
 
         onEvent('click', restart, () => {
-
-            result.classList.add('hidden');
-            resultContent.innerText = '';
-            input.value = '';
-            background.classList.remove('bg-blur');
-
-            hitNum = 0;
-            hits.innerText = hitNum;
-
-            resetIntervals();
-            addNewWord();
-            gameIsOn = true;
-         });
+            resetGame();
+            input.focus();
+        });
     }
-
 }
 
-const result = select('.result');
-const background = select('.background');
-const resultContent = select('.result h1');
-const restart = select('.restart');
-
-onEvent('load', window, () => {
-    // input.value = '';
-    restart.classList.add('hidden');
-    result.classList.add('hidden');
-});

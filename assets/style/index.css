@@ -26,7 +26,6 @@ header {
     padding-top: 30px;
     position: absolute;
     left: 160px;
-    z-index: 1;
 }
 
 h1 {
@@ -53,6 +52,7 @@ header div {
     font-weight: 600;
     transition: 0.3s;
     cursor: pointer;
+    z-index: 1;   
 }
 
 .start {
@@ -63,7 +63,7 @@ header div {
     position: absolute;
 }
 
-.start:hover {
+.start:hover, .restart:hover {
     background-color: #677d02;
 }
 
@@ -157,6 +157,8 @@ header div {
     font-size: 60px;
     color: #f6f6ff;
     font-weight: 700;
+    text-align: center;
+    padding-bottom: 20px;
 }
 
 .hidden {
@@ -165,8 +167,4 @@ header div {
 
 .visible {
     visibility: visible;
-}
-
-.display-none {
-    display: none;
 }
