@@ -25,7 +25,8 @@ header {
     align-items: center;
     padding-top: 30px;
     position: absolute;
-    left: 160px;
+    left: 30px;
+    right: 30px;
 }
 
 h1 {
