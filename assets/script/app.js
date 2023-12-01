@@ -35,47 +35,50 @@ const hits = select('.hits span');
 const myWord = select('.my-word');
 const input = select('.input');
 
-let seconds = 10;
+const SECOND_IN_MILLISECONDS = 1000;
+let seconds = 90;
 let randomIndex = Math.floor(Math.random() * 120);
 let hitNum = 0;
 
-time.innerText = seconds;
+time.innerText = `${seconds}`;
 
 function updateTime() {
     seconds--;
-    time.innerText = seconds;
+    time.innerText = `${seconds}`;
+    if (seconds === 0) {
+        clearInterval(checkTime);
+    }
+}
+
+let checkTime;
+
+function timeInterval() {
+    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
 }
 
 function playSound() {
     sound.play();
 }
 
-// setInterval(playSound, 1000);
+// setInterval(playSound, SECOND_IN_MILLISECONDS);
 
 function addNewWord() {
+    let copy = words;
     let index = randomIndex;
-    myWord.innerText = `${words[index]}`;
-    words.splice(index, 1);
+    myWord.innerText = `${copy[index]}`;
+    copy.splice(index, 1);
 }
+
+let gameIsOn = false;
 
 onEvent('click', start, () => {
-    playSound();
-    const checkTime = setInterval(updateTime, 1000);
-    addNewWord();
-    if (time.innerText === 0) clearInterval(checkTime);
-});
-
-function gameOver() {
-    if (time.innerText === '0') {
-        clearInterval()
-        clearInterval(checkInput);
-        resultContent.innerText = 'Game Over';
-        result.classList.remove('hidden');
-        result.classList.add('visible');
-        background.classList.add('bg-blur');
+    if (!gameIsOn) {
+        playSound();
+        timeInterval();
+        addNewWord();
     }
-
-}
+    gameIsOn = true;
+});
 
 function wordHit() {
     gameOver();
@@ -90,16 +93,55 @@ function wordHit() {
     }
 }
 
-const checkInput = setInterval(wordHit, 1000)
+let checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
 
 
+function resetIntervals() {
+    if (!gameIsOn) {
+        seconds = 90;
+        time.innerText = `${seconds}`;
+        checkInput = setInterval(wordHit, SECOND_IN_MILLISECONDS);
+        timeInterval();
+    }
+}
+
+function gameOver() {
+    gameIsOn = false;
+    if (time.innerText === '0') {
+        clearInterval(checkInput);
+
+
+        resultContent.innerText = 'Game Over';
+        start.classList.add('hidden');
+        result.classList.remove('hidden');
+        restart.classList.remove('hidden');
+        background.classList.add('bg-blur');
+
+        onEvent('click', restart, () => {
+
+            result.classList.add('hidden');
+            resultContent.innerText = '';
+            input.value = '';
+            background.classList.remove('bg-blur');
+
+            hitNum = 0;
+            hits.innerText = hitNum;
+
+            resetIntervals();
+            addNewWord();
+            gameIsOn = true;
+         });
+    }
+
+}
 
 const result = select('.result');
 const background = select('.background');
-const secretNum = select('.result p');
 const resultContent = select('.result h1');
+const restart = select('.restart');
 
 onEvent('load', window, () => {
     // input.value = '';
+    restart.classList.add('hidden');
     result.classList.add('hidden');
 });

@@ -45,13 +45,22 @@ header div {
     border-radius: 50%;
 }
 
-.start {
-    padding: 14px 30px;
+.start, .restart {
+    padding: 14px 0px;
+    width: 120px;
     border-radius: 4px;
     background-color: #83a003;
     font-weight: 600;
     transition: 0.3s;
     cursor: pointer;
+}
+
+.start {
+    position: relative;
+}
+
+.restart {
+    position: absolute;
 }
 
 .start:hover {
@@ -116,6 +125,18 @@ header div {
     border: 2px solid #fff;
 }
 
+.bg-blur {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(3px);
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
 .result {
     position: absolute;
     top: 50%;
@@ -144,4 +165,8 @@ header div {
 
 .visible {
     visibility: visible;
+}
+
+.display-none {
+    display: none;
 }
