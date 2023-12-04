@@ -51,17 +51,18 @@ header div {
     border-radius: 4px;
     background-color: #83a003;
     font-weight: 600;
-    transition: 0.3s;
     cursor: pointer;
     z-index: 1;   
 }
 
 .start {
     position: relative;
+    transition: all 0.3s ease-out;
 }
 
 .restart {
     position: absolute;
+    transition: all 0.3s ease-out;
 }
 
 .start:hover, .restart:hover {
@@ -148,7 +149,7 @@ header div {
 }
 
 .result p {
-    font-size: 20px;
+    font-size: 26px;
     color: #fff;
     text-align: center;
     padding-top: 20px;

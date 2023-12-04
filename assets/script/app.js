@@ -121,7 +121,7 @@ let checkInput = setInterval(wordHit, 1);
 
 function resetIntervals() {
     if (!gameIsOn) {
-        seconds = 5;
+        seconds = 90;
         time.innerText = `${seconds}`;
         checkInput = setInterval(wordHit, 1);
         soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
