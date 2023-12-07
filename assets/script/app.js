@@ -25,14 +25,11 @@ const words = [
     'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
 ];
 
-const sound = new Audio('./assets/audio/game-sound.wav');
-sound.type = 'audio/wav';
-sound.volume = 0.04;
+const sound = new Audio('./assets/audio/game-sound.mp3');
+sound.type = 'audio/mp3';
 
 const soundTwo = new Audio('./assets/audio/right.mp3');
 soundTwo.type = 'audio/mp3';
-soundTwo.volume = 0.07;
-
 
 const scores = [];
 
@@ -47,60 +44,60 @@ const resultContent = select('.result h1');
 const restart = select('.restart');
 const SECOND_IN_MILLISECONDS = 1000;
 
-let seconds = 90;
+let seconds = 99;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
+
+function continuePlaying() {
+    if (sound.paused) {
+        sound.play();
+    }
+}
 
 onEvent('load', window, () => {
     input.value = '';
     restart.classList.add('hidden');
     result.classList.add('hidden');
-    input.focus();
+    input.setAttribute('disabled', '');
 });
+
+// onEvent('hover', input, () => {
+//     input.classList.add()
+// })
 
 function updateTime() {
     seconds--;
     time.innerText = `${seconds}`;
-    if (seconds === 0) {
-        clearInterval(checkTime);
-    }
+    continuePlaying();
 }
-
-let checkTime;
-
-function timeInterval() {
-    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
-}
-
-function playSound() {
-    sound.play();
-}
-
-let soundInterval;
 
 function randomIndex(length) { 
     return Math.floor(Math.random() * length);
 }
 
 let copy = [...words];
+
 function addNewWord() {
     let index = randomIndex(copy.length);
     myWord.innerText = `${copy[index]}`;
     copy.splice(index, 1);
 }
 
-let gameIsOn = false;
+function removeHidden() {
+    restart.classList.remove('hidden');
+    start.classList.add('hidden');
+}
+
+let checkTime;
 
 onEvent('click', start, () => {
-    if (!gameIsOn) {
-        soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
-        input.focus();
-        playSound();
-        timeInterval();
-        addNewWord();
-    }
-    gameIsOn = true;
+    input.removeAttribute('disabled', '');
+    input.focus();
+    sound.play();
+    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
+    addNewWord();
+    removeHidden();
 });
 
 function wordHit() {
@@ -119,35 +116,10 @@ function wordHit() {
 
 let checkInput = setInterval(wordHit, 1);
 
-function resetIntervals() {
-    if (!gameIsOn) {
-        seconds = 90;
-        time.innerText = `${seconds}`;
-        checkInput = setInterval(wordHit, 1);
-        soundInterval = setInterval(playSound, SECOND_IN_MILLISECONDS);
-        timeInterval();
-    }
-}
-
 function removeGameOver() {
     resultContent.innerText = 'Game Over';
-    start.classList.add('hidden');
     result.classList.remove('hidden');
-    restart.classList.remove('hidden');
     background.classList.add('bg-blur');
-}
-
-function resetGame() {
-    copy = [...words];
-    result.classList.add('hidden');
-    resultContent.innerText = '';
-    input.value = '';
-    background.classList.remove('bg-blur');
-    hitNum = 0;
-    hits.innerText = hitNum;
-    resetIntervals();
-    addNewWord();
-    gameIsOn = true;
 }
 
 function createScore() {
@@ -187,19 +159,39 @@ function gameOverFns() {
     displayData();
     input.value = '';
     clearInterval(checkInput);
-    clearInterval(soundInterval);
+    clearInterval(checkTime);
     removeGameOver();
     sound.pause();
 }
 
 function gameOver() {
-    gameIsOn = false;
-    if (time.innerText === '0') {
+    if (seconds === 0) {
         gameOverFns();
-
-        onEvent('click', restart, () => {
-            resetGame();
-            input.focus();
-        });
     }
 }
+
+function resetGame() {
+    copy = [...words];
+    result.classList.add('hidden');
+    resultContent.innerText = '';
+    input.value = '';
+    background.classList.remove('bg-blur');
+    hitNum = 0;
+    hits.innerText = hitNum;
+    resetIntervals();
+    addNewWord();
+}
+
+function resetIntervals() {
+    seconds = 99;
+    time.innerText = `${seconds}`;
+    checkInput = setInterval(wordHit, 1);
+    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS)
+    sound.play();
+}
+
+onEvent('click', restart, () => {
+    clearInterval(checkTime);
+    resetGame();
+    input.focus();
+});

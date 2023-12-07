@@ -25,7 +25,7 @@ header {
     align-items: center;
     padding-top: 30px;
     position: absolute;
-    left: 30px;
+    left: 14px;
     right: 30px;
 }
 
@@ -57,16 +57,15 @@ header div {
 
 .start {
     position: relative;
-    transition: all 0.3s ease-out;
 }
 
 .restart {
     position: absolute;
-    transition: all 0.3s ease-out;
 }
 
 .start:hover, .restart:hover {
     background-color: #677d02;
+    transition: all 0.3s ease-in-out;
 }
 
 .time {
@@ -123,8 +122,12 @@ header div {
     text-align: center;
     font-weight: 500;
     color: #fff;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0 0 0 / 0.3);
     border: 2px solid #fff;
+}
+
+.input:disabled {
+    cursor: not-allowed;
 }
 
 /* Modal */
@@ -170,4 +173,25 @@ header div {
 
 .visible {
     visibility: visible;
+}
+
+/* ------------------Media queries--------------- */
+/* ---------------------------------------------- */
+
+@media screen and (max-width: 750px) {
+    h1 {
+        font-size: 50px;
+        line-height: 1;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    header {
+        flex-direction: column;
+        gap: 20px;
+        padding-top: 60px;
+    }
+    .game {
+        padding-top: 260px;
+    }
 }
