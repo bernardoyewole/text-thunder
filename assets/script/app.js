@@ -42,9 +42,11 @@ const result = select('.result');
 const background = select('.background');
 const resultContent = select('.result h1');
 const restart = select('.restart');
+const scoreBtn = select('.score-btn');
+
 const SECOND_IN_MILLISECONDS = 1000;
 
-let seconds = 99;
+let seconds = 10;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
@@ -61,10 +63,6 @@ onEvent('load', window, () => {
     result.classList.add('hidden');
     input.setAttribute('disabled', '');
 });
-
-// onEvent('hover', input, () => {
-//     input.classList.add()
-// })
 
 function updateTime() {
     seconds--;
@@ -122,27 +120,48 @@ function removeGameOver() {
     background.classList.add('bg-blur');
 }
 
-function createScore() {
-    let percentage = Math.round(((hitNum / words.length)) * 100) ;
-    let newScore = new Score(`${new Date().toDateString()}`, `${hitNum}`, `${percentage}%`);
-    scores.push(newScore);
+let score;
+let date;
+let percentage;
+
+function setScoreObj() {
+    score = hitNum;
+    date = new Date().toDateString();
+    percentage = Math.round(((score / words.length)) * 100) ;
+    scores.push({
+        'score': score,
+        'date': date,
+        'percentage': percentage
+    });
 }
 
-function getScoreObj() {
-    let scoreObj = scores[scores.length - 1];
-    const {date, hits, percentage} = scoreObj;
-    return {
-        Date: date,
-        Username: 'Anonymous 001', 
-        Hits: hits,
-        Percentage: percentage,
-    }
+function sortArray(arr) {
+    // let arr2 =  [...new Set(arr)];
+    return arr.toSorted((a, b) => b.score - a.score);
 }
+
+let count = 1;
+
+function storeInLocalStorage() {
+    let arrayOfScores = sortArray(scores);
+    if (count <= 9) {
+        localStorage.setItem('scores', JSON.stringify(arrayOfScores));
+    }
+    count++;
+}
+
+// let email = 'bernard@gmail.com';
+// localStorage.setItem('email', email);
+// localStorage.removeItem('email', email);
+// print(localStorage);
+// localStorage.clear();
 
 let resultParagraphs;
 
 function displayData() {
-    let obj = getScoreObj();
+    setScoreObj();
+    storeInLocalStorage();
+    let obj = scores[scores.length - 1];
     let parag;
     resultParagraphs = selectAll('.result p');
 
@@ -154,9 +173,62 @@ function displayData() {
     resultParagraphs.forEach(parag => parag.remove());
 }
 
+let storedScores;
+
+function appendScoresInfo() {
+    dialog.innerHTML = ''
+    storedScores = JSON.parse(localStorage.getItem('scores'));
+    // print(storedScores);
+    let count = 1;
+    storedScores.forEach(obj => {
+        let parag1 = create('p');
+        let parag2 = create('p');
+        let parag3 = create('p');
+        let box = create('div');
+        parag1.innerText = `#${count}`
+        parag2.innerText = `${obj.score} words`;
+        parag3.innerText = `${obj.date}`;
+        count++;
+        [parag1, parag2, parag3].forEach(ele => {
+            box.appendChild(ele);
+            if (box.childElementCount == 3) dialog.appendChild(box);
+        });
+    });
+}
+
+let noInfoIsAdded = false;
+
+function noInfo() {
+    if (!scores.length > 0 && !noInfoIsAdded) {
+        let parag = create('p');
+        parag.innerText =  'No games have been played';
+        dialog.appendChild(parag);
+        noInfoIsAdded = true;
+    }
+}
+
+let pElements;
+
+function clearDialog() {
+    pElements = dialog.querySelectorAll('dialog p');
+    if (pElements.length > 0) {
+        pElements.forEach(ele => ele.parentNode.removeChild(ele));
+    }
+}
+
+function scoreBoardInfo() {
+    if (scores.length > 0) {
+        // clearDialog();
+        // print(localStorage);
+        appendScoresInfo();
+    } else {
+        noInfo();
+    }
+}
+
 function gameOverFns() {
-    createScore();
     displayData();
+    scoreBoardInfo();
     input.value = '';
     clearInterval(checkInput);
     clearInterval(checkTime);
@@ -183,7 +255,7 @@ function resetGame() {
 }
 
 function resetIntervals() {
-    seconds = 99;
+    seconds = 10;
     time.innerText = `${seconds}`;
     checkInput = setInterval(wordHit, 1);
     checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS)
@@ -195,3 +267,30 @@ onEvent('click', restart, () => {
     resetGame();
     input.focus();
 });
+
+
+const dialog = document.querySelector('dialog');
+
+/*
+    These methods are part of the new 'dialog' API. Therefore they are
+    available by default in our code
+
+    By default, HTML centers the dialog component (my reset.css messes with
+    the default style)
+*/
+
+scoreBtn.addEventListener('click', () => {
+    noInfo();
+    // scoreBoardInfo();
+    dialog.showModal();
+});
+
+dialog.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+
+    if (e.clientY < rect.top || e.clientY > rect.bottom || 
+        e.clientX < rect.left || e.clientX > rect.right) {
+        dialog.close();
+    }
+})
+

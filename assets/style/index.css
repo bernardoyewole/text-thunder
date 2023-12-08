@@ -74,6 +74,7 @@ header div {
 }
 
 .game {
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -130,7 +131,7 @@ header div {
     cursor: not-allowed;
 }
 
-/* Modal */
+/* Game Over Modal*/
 .bg-blur {
     position: fixed;
     left: 0;
@@ -165,6 +166,69 @@ header div {
     font-weight: 700;
     text-align: center;
     padding-bottom: 20px;
+}
+
+.score-btn {
+    position: fixed;
+    left: 150px;
+    bottom: 50px;
+    padding: 14px 0px;
+    width: 140px;
+    border-radius: 26px;
+    background-color: #a58206;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.score-btn:hover {
+    background-color: #866a04;
+}
+
+/* Score Board Modal*/
+dialog {
+    margin: auto;
+    padding: 19px 25px 24px 25px;
+    width: 340px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 4px rgba(0 0 0 / 0.2);
+    animation: 0.2s linear anim;
+    background-color: #e1e1e1;
+}
+
+@keyframes anim {
+    from {
+        opacity: 0;
+        translate: 0 -6px;
+    } to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.2);
+    backdrop-filter: blur(5px);
+}
+
+dialog h2 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    text-align: center;
+    color: #4f6100;
+}
+
+dialog p {
+    margin-top: 10px;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+dialog div {
+    display: flex;
+    justify-content: space-between;
 }
 
 .hidden {
