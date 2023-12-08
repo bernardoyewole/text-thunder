@@ -32,6 +32,7 @@ const soundTwo = new Audio('./assets/audio/right.mp3');
 soundTwo.type = 'audio/mp3';
 
 const scores = [];
+const SECOND_IN_MILLISECONDS = 1000;
 
 const start = select('.start');
 const time = select('.time');
@@ -43,10 +44,9 @@ const background = select('.background');
 const resultContent = select('.result h1');
 const restart = select('.restart');
 const scoreBtn = select('.score-btn');
+const dialog = document.querySelector('dialog');
 
-const SECOND_IN_MILLISECONDS = 1000;
-
-let seconds = 10;
+let seconds = 20;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
@@ -64,10 +64,13 @@ onEvent('load', window, () => {
     input.setAttribute('disabled', '');
 });
 
+let gameIsOn = false;
+
 function updateTime() {
     seconds--;
     time.innerText = `${seconds}`;
     continuePlaying();
+    gameIsOn = true;
 }
 
 function randomIndex(length) { 
@@ -88,15 +91,28 @@ function removeHidden() {
 }
 
 let checkTime;
+let checkInput;
+
+function setIntervals() {
+    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
+    checkInput = setInterval(wordHit, 1);
+}
 
 onEvent('click', start, () => {
     input.removeAttribute('disabled', '');
     input.focus();
     sound.play();
-    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
+    setIntervals();
     addNewWord();
     removeHidden();
 });
+
+function hit() {
+    hitNum++;
+    hits.innerText = hitNum;
+    input.value = '';
+    addNewWord();
+}
 
 function wordHit() {
     gameOver();
@@ -104,17 +120,12 @@ function wordHit() {
         if (userWord.toLowerCase().trim() === myWord.innerText) {
         if (userWord !== '' && myWord.innerText !== '') {
             soundTwo.play();
-            hitNum++;
-            hits.innerText = hitNum;
-            input.value = '';
-            addNewWord();
+            hit();
         }
     }
 }
 
-let checkInput = setInterval(wordHit, 1);
-
-function removeGameOver() {
+function addGameOver() {
     resultContent.innerText = 'Game Over';
     result.classList.remove('hidden');
     background.classList.add('bg-blur');
@@ -130,13 +141,12 @@ function setScoreObj() {
     percentage = Math.round(((score / words.length)) * 100) ;
     scores.push({
         'score': score,
-        'date': date,
-        'percentage': percentage
+        'percentage': `${percentage}%`,
+        'date': date
     });
 }
 
 function sortArray(arr) {
-    // let arr2 =  [...new Set(arr)];
     return arr.toSorted((a, b) => b.score - a.score);
 }
 
@@ -149,12 +159,6 @@ function storeInLocalStorage() {
     }
     count++;
 }
-
-// let email = 'bernard@gmail.com';
-// localStorage.setItem('email', email);
-// localStorage.removeItem('email', email);
-// print(localStorage);
-// localStorage.clear();
 
 let resultParagraphs;
 
@@ -176,9 +180,7 @@ function displayData() {
 let storedScores;
 
 function appendScoresInfo() {
-    dialog.innerHTML = ''
     storedScores = JSON.parse(localStorage.getItem('scores'));
-    // print(storedScores);
     let count = 1;
     storedScores.forEach(obj => {
         let parag1 = create('p');
@@ -207,47 +209,56 @@ function noInfo() {
     }
 }
 
-let pElements;
-
 function clearDialog() {
-    pElements = dialog.querySelectorAll('dialog p');
+    let pElements = dialog.querySelectorAll('dialog p');
     if (pElements.length > 0) {
-        pElements.forEach(ele => ele.parentNode.removeChild(ele));
+        pElements.forEach(ele => ele.remove());
     }
 }
 
 function scoreBoardInfo() {
     if (scores.length > 0) {
-        // clearDialog();
-        // print(localStorage);
+        clearDialog();
         appendScoresInfo();
     } else {
         noInfo();
     }
 }
 
-function gameOverFns() {
-    displayData();
-    scoreBoardInfo();
-    input.value = '';
+let checkInputCleared;
+
+function clearIntervals() {
     clearInterval(checkInput);
     clearInterval(checkTime);
-    removeGameOver();
+}
+
+function gameOverFns() {
+    input.value = '';
+    displayData();
+    scoreBoardInfo();
+    clearIntervals();
+    addGameOver();
     sound.pause();
+    checkInputCleared = true;
 }
 
 function gameOver() {
     if (seconds === 0) {
         gameOverFns();
+        gameIsOn = false;
     }
 }
 
-function resetGame() {
-    copy = [...words];
+function removeGameOver() {
     result.classList.add('hidden');
-    resultContent.innerText = '';
-    input.value = '';
     background.classList.remove('bg-blur');
+    resultContent.innerText = '';
+}
+
+function resetGame() {
+    removeGameOver();
+    copy = [...words];
+    input.value = '';
     hitNum = 0;
     hits.innerText = hitNum;
     resetIntervals();
@@ -255,11 +266,12 @@ function resetGame() {
 }
 
 function resetIntervals() {
-    seconds = 10;
+    seconds = 20;
     time.innerText = `${seconds}`;
-    checkInput = setInterval(wordHit, 1);
+    if (checkInputCleared) checkInput = setInterval(wordHit, 1);
     checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS)
     sound.play();
+    checkInputCleared = false;
 }
 
 onEvent('click', restart, () => {
@@ -268,29 +280,16 @@ onEvent('click', restart, () => {
     input.focus();
 });
 
-
-const dialog = document.querySelector('dialog');
-
-/*
-    These methods are part of the new 'dialog' API. Therefore they are
-    available by default in our code
-
-    By default, HTML centers the dialog component (my reset.css messes with
-    the default style)
-*/
-
-scoreBtn.addEventListener('click', () => {
+onEvent('click', scoreBtn, () => {
     noInfo();
-    // scoreBoardInfo();
-    dialog.showModal();
+    !gameIsOn ? dialog.showModal() : input.focus();
 });
 
-dialog.addEventListener('click', function(e) {
+onEvent('click', dialog, function(e) {
     const rect = this.getBoundingClientRect();
 
     if (e.clientY < rect.top || e.clientY > rect.bottom || 
         e.clientX < rect.left || e.clientX > rect.right) {
         dialog.close();
     }
-})
-
+});

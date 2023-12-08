@@ -64,7 +64,7 @@ header div {
 }
 
 .start:hover, .restart:hover {
-    background-color: #677d02;
+    background-color: #738d03;
     transition: all 0.3s ease-in-out;
 }
 
@@ -175,7 +175,7 @@ header div {
     padding: 14px 0px;
     width: 140px;
     border-radius: 26px;
-    background-color: #a58206;
+    background-color: #d7a900;
     font-weight: 600;
     cursor: pointer;
     z-index: 1;
@@ -183,7 +183,11 @@ header div {
 }
 
 .score-btn:hover {
-    background-color: #866a04;
+    background-color: #b68e00;
+}
+
+.score-btn:disabled {
+    cursor: not-allowed;
 }
 
 /* Score Board Modal*/
@@ -194,7 +198,7 @@ dialog {
     border-radius: 8px;
     box-shadow: 2px 2px 4px rgba(0 0 0 / 0.2);
     animation: 0.2s linear anim;
-    background-color: #e1e1e1;
+    background-color: #18034d;
 }
 
 @keyframes anim {
@@ -213,17 +217,18 @@ dialog::backdrop {
 }
 
 dialog h2 {
-    font-size: 22px;
+    font-size: 30px;
     font-weight: 600;
     letter-spacing: -0.2px;
     text-align: center;
-    color: #4f6100;
+    color: #d7a900;
 }
 
 dialog p {
     margin-top: 10px;
     line-height: 1.4;
     font-weight: 500;
+    color: #fff;
 }
 
 dialog div {
