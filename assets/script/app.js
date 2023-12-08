@@ -162,40 +162,47 @@ function storeInLocalStorage() {
 
 let resultParagraphs;
 
+function createParagraphs(obj, parag) {
+    for (const prop in obj) {
+        parag = create('p');
+        parag.innerText = `${prop}: ${obj[prop]}`;
+        result.appendChild(parag);
+    }
+}
+
 function displayData() {
     setScoreObj();
     storeInLocalStorage();
     let obj = scores[scores.length - 1];
     let parag;
     resultParagraphs = selectAll('.result p');
-
-    for (const prop in obj) {
-        parag = create('p');
-        parag.innerText = `${prop}: ${obj[prop]}`;
-        result.appendChild(parag);
-    }
+    createParagraphs(obj, parag);
     resultParagraphs.forEach(parag => parag.remove());
 }
 
 let storedScores;
 
-function appendScoresInfo() {
-    storedScores = JSON.parse(localStorage.getItem('scores'));
-    let count = 1;
+function createHighScores(num) {
     storedScores.forEach(obj => {
         let parag1 = create('p');
         let parag2 = create('p');
         let parag3 = create('p');
         let box = create('div');
-        parag1.innerText = `#${count}`
+        parag1.innerText = `#${num}`
         parag2.innerText = `${obj.score} words`;
         parag3.innerText = `${obj.date}`;
-        count++;
+        num++;
         [parag1, parag2, parag3].forEach(ele => {
             box.appendChild(ele);
             if (box.childElementCount == 3) dialog.appendChild(box);
         });
-    });
+    });   
+}
+
+function appendScoresInfo() {
+    storedScores = JSON.parse(localStorage.getItem('scores'));
+    let count = 1;
+    createHighScores(count);   
 }
 
 let noInfoIsAdded = false;
