@@ -147,17 +147,12 @@ function setScoreObj() {
 }
 
 function sortArray(arr) {
-    return arr.toSorted((a, b) => b.score - a.score);
+    return arr.toSorted((a, b) => b.score - a.score).splice(0, 9);
 }
-
-let count = 1;
 
 function storeInLocalStorage() {
     let arrayOfScores = sortArray(scores);
-    if (count <= 9) {
-        localStorage.setItem('scores', JSON.stringify(arrayOfScores));
-    }
-    count++;
+    localStorage.setItem('scores', JSON.stringify(arrayOfScores));
 }
 
 let resultParagraphs;
@@ -276,7 +271,7 @@ function resetIntervals() {
     seconds = 20;
     time.innerText = `${seconds}`;
     if (checkInputCleared) checkInput = setInterval(wordHit, 1);
-    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS)
+    checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
     sound.play();
     checkInputCleared = false;
 }

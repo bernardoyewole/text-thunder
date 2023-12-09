@@ -170,7 +170,7 @@ header div {
 
 .score-btn {
     position: fixed;
-    left: 150px;
+    left: 50% - 140px;
     bottom: 50px;
     padding: 14px 0px;
     width: 140px;
@@ -258,9 +258,12 @@ dialog div {
     header {
         flex-direction: column;
         gap: 20px;
-        padding-top: 60px;
     }
     .game {
-        padding-top: 260px;
+        padding-top: 190px;
+        gap: 10px;
+    }
+    .score-btn {
+        bottom: 20px;
     }
 }
