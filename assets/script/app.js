@@ -44,7 +44,8 @@ const background = select('.background');
 const resultContent = select('.result h1');
 const restart = select('.restart');
 const scoreBtn = select('.score-btn');
-const dialog = document.querySelector('dialog');
+const dialog = select('dialog');
+const instruction = select('.instruction');
 
 let seconds = 20;
 let hitNum = 0;
@@ -105,6 +106,7 @@ onEvent('click', start, () => {
     setIntervals();
     addNewWord();
     removeHidden();
+    instruction.innerText = `Ready to become the new champion?`;
 });
 
 function hit() {
