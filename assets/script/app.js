@@ -31,7 +31,6 @@ sound.type = 'audio/mp3';
 const soundTwo = new Audio('./assets/audio/right.mp3');
 soundTwo.type = 'audio/mp3';
 
-const scores = [];
 const SECOND_IN_MILLISECONDS = 1000;
 
 const start = select('.start');
@@ -65,13 +64,10 @@ onEvent('load', window, () => {
     input.setAttribute('disabled', '');
 });
 
-let gameIsOn = false;
-
 function updateTime() {
     seconds--;
     time.innerText = `${seconds}`;
     continuePlaying();
-    gameIsOn = true;
 }
 
 function randomIndex(length) { 
@@ -101,6 +97,7 @@ function setIntervals() {
 
 onEvent('click', start, () => {
     input.removeAttribute('disabled', '');
+    scoreBtn.style.display = 'none';
     input.focus();
     sound.play();
     setIntervals();
@@ -133,6 +130,7 @@ function addGameOver() {
     background.classList.add('bg-blur');
 }
 
+let scores = getScoresFromStorage();
 let score;
 let date;
 let percentage;
@@ -140,7 +138,7 @@ let percentage;
 function setScoreObj() {
     score = hitNum;
     date = new Date().toDateString();
-    percentage = Math.round(((score / words.length)) * 100) ;
+    percentage = ((score / words.length) * 100).toFixed(1) ;
     scores.push({
         'score': score,
         'percentage': `${percentage}%`,
@@ -150,6 +148,11 @@ function setScoreObj() {
 
 function sortArray(arr) {
     return arr.toSorted((a, b) => b.score - a.score).splice(0, 9);
+}
+
+function getScoresFromStorage() {
+    let storedScores = localStorage.getItem('scores');
+    return storedScores ? JSON.parse(storedScores) : [];
 }
 
 function storeInLocalStorage() {
@@ -185,7 +188,7 @@ function createHighScores(num) {
         let parag2 = create('p');
         let parag3 = create('p');
         let box = create('div');
-        parag1.innerText = `#${num}`
+        parag1.innerText = `#${num}`;
         parag2.innerText = `${obj.score} words`;
         parag3.innerText = `${obj.date}`;
         num++;
@@ -239,17 +242,16 @@ function clearIntervals() {
 function gameOverFns() {
     input.value = '';
     displayData();
-    scoreBoardInfo();
     clearIntervals();
     addGameOver();
     sound.pause();
     checkInputCleared = true;
+    scoreBtn.style.display = 'block';
 }
 
 function gameOver() {
     if (seconds === 0) {
         gameOverFns();
-        gameIsOn = false;
     }
 }
 
@@ -267,6 +269,7 @@ function resetGame() {
     hits.innerText = hitNum;
     resetIntervals();
     addNewWord();
+    scoreBtn.style.display = 'none';
 }
 
 function resetIntervals() {
@@ -285,8 +288,9 @@ onEvent('click', restart, () => {
 });
 
 onEvent('click', scoreBtn, () => {
+    scoreBoardInfo();
     noInfo();
-    !gameIsOn ? dialog.showModal() : input.focus();
+    dialog.showModal();
 });
 
 onEvent('click', dialog, function(e) {
