@@ -46,7 +46,7 @@ const scoreBtn = select('.score-btn');
 const dialog = select('dialog');
 const instruction = select('.instruction');
 
-let seconds = 20;
+let seconds = 60;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
