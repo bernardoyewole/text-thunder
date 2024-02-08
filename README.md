@@ -1,5 +1,5 @@
-## Typing Game
-Click [here](https://bernardoyewole.github.io/typing-game/) to check it out.
+## Text Thunder
+Click [here](https://bernardoyewole.github.io/text-thunder/) to check it out.
 
 ## Built With
 <p>
