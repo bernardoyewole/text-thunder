@@ -46,7 +46,7 @@ const scoreBtn = select('.score-btn');
 const dialog = select('dialog');
 const instruction = select('.instruction');
 
-let seconds = 60;
+let seconds = 30;
 let hitNum = 0;
 
 time.innerText = `${seconds}`;
@@ -273,7 +273,7 @@ function resetGame() {
 }
 
 function resetIntervals() {
-    seconds = 20;
+    seconds = 30;
     time.innerText = `${seconds}`;
     if (checkInputCleared) checkInput = setInterval(wordHit, 1);
     checkTime = setInterval(updateTime, SECOND_IN_MILLISECONDS);
